@@ -32,6 +32,10 @@ public class ProcessingJobController {
                 job.getId(),
                 job.getFileName(),
                 job.getStatus(),
+                job.getTotalRecords(),
+                job.getProcessedRecords(),
+                job.getSuccessfulRecords(),
+                job.getFailedRecords(),
                 job.getCreatedAt()
         );
     }
@@ -43,6 +47,10 @@ public class ProcessingJobController {
                 job.getId(),
                 job.getFileName(),
                 job.getStatus(),
+                job.getTotalRecords(),
+                job.getProcessedRecords(),
+                job.getSuccessfulRecords(),
+                job.getFailedRecords(),
                 job.getCreatedAt()
         );
     }

@@ -7,6 +7,10 @@ public record ProcessingJobResponse(
         UUID id,
         String fileName,
         JobStatus status,
+        long totalRecords,
+        long processedRecords,
+        long successfulRecords,
+        long failedRecords,
         LocalDateTime createdAt
 ) {
 }

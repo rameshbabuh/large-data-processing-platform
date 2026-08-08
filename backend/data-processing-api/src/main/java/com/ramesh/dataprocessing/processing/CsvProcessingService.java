@@ -1,5 +1,7 @@
 package com.ramesh.dataprocessing.processing;
 
+import com.ramesh.dataprocessing.job.ProcessingJob;
+import com.ramesh.dataprocessing.job.ProcessingJobRepository;
 import com.ramesh.dataprocessing.transaction.Transaction;
 import com.ramesh.dataprocessing.transaction.TransactionRepository;
 import org.springframework.stereotype.Service;
@@ -11,19 +13,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class CsvProcessingService {
 
     private final TransactionRepository transactionRepository;
     private final ProcessingErrorRepository processingErrorRepository;
+    private final ProcessingJobRepository processingJobRepository;
 
     public CsvProcessingService(
             TransactionRepository transactionRepository,
-            ProcessingErrorRepository processingErrorRepository
+            ProcessingErrorRepository processingErrorRepository,
+            ProcessingJobRepository processingJobRepository
     ) {
         this.transactionRepository = transactionRepository;
         this.processingErrorRepository = processingErrorRepository;
+        this.processingJobRepository = processingJobRepository;
     }
 
     public long countRows(Path filePath) throws IOException {
@@ -53,7 +59,7 @@ public class CsvProcessingService {
                 .build();
     }
 
-    public ProcessingResult processFile(Path filePath) throws IOException {
+    public ProcessingResult processFile(UUID jobId, Path filePath) throws IOException {
         long successful = 0;
         long failed = 0;
         long rowNumber = 1;
@@ -78,6 +84,17 @@ public class CsvProcessingService {
                             .build();
                     processingErrorRepository.save(processingError);
                     failed++;
+                }
+
+                if ((successful + failed) % 100 == 0) {
+                    ProcessingJob job = processingJobRepository.findById(jobId)
+                            .orElseThrow();
+
+                    job.setProcessedRecords(successful + failed);
+                    job.setSuccessfulRecords(successful);
+                    job.setFailedRecords(failed);
+
+                    processingJobRepository.save(job);
                 }
             }
         }

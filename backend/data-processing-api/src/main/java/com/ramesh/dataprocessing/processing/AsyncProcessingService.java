@@ -33,7 +33,7 @@ public class AsyncProcessingService {
         job.setStartedAt(LocalDateTime.now());
         processingJobRepository.save(job);
 
-        ProcessingResult result = csvProcessingService.processFile(filePath);
+        ProcessingResult result = csvProcessingService.processFile(jobId, filePath);
 
         job.setProcessedRecords(
                 result.successfulRecords() + result.failedRecords()
