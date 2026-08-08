@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/jobs")
@@ -27,6 +28,17 @@ public class ProcessingJobController {
         }
 
         ProcessingJob job = service.createJob(file);
+        return new ProcessingJobResponse(
+                job.getId(),
+                job.getFileName(),
+                job.getStatus(),
+                job.getCreatedAt()
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ProcessingJobResponse getJob(@PathVariable UUID id) {
+        ProcessingJob job = service.getJob(id);
         return new ProcessingJobResponse(
                 job.getId(),
                 job.getFileName(),

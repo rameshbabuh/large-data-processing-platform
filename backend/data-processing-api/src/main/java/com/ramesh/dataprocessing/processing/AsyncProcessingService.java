@@ -2,6 +2,7 @@ package com.ramesh.dataprocessing.processing;
 
 import com.ramesh.dataprocessing.job.JobStatus;
 import com.ramesh.dataprocessing.job.ProcessingJob;
+import com.ramesh.dataprocessing.job.ProcessingJobRepository;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 

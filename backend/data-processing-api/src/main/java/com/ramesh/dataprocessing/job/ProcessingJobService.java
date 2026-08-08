@@ -1,7 +1,7 @@
 package com.ramesh.dataprocessing.job;
 
+import com.ramesh.dataprocessing.processing.AsyncProcessingService;
 import com.ramesh.dataprocessing.processing.CsvProcessingService;
-import com.ramesh.dataprocessing.processing.ProcessingResult;
 import com.ramesh.dataprocessing.storage.LocalFileStorageService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class ProcessingJobService {
@@ -17,15 +18,18 @@ public class ProcessingJobService {
     private final ProcessingJobRepository repository;
     private final LocalFileStorageService fileStorageService;
     private final CsvProcessingService csvProcessingService;
+    private final AsyncProcessingService asyncProcessingService;
 
     public ProcessingJobService(
             ProcessingJobRepository repository,
             LocalFileStorageService fileStorageService,
-            CsvProcessingService csvProcessingService
+            CsvProcessingService csvProcessingService,
+            AsyncProcessingService asyncProcessingService
     ) {
         this.repository = repository;
         this.fileStorageService = fileStorageService;
         this.csvProcessingService = csvProcessingService;
+        this.asyncProcessingService = asyncProcessingService;
     }
 
     public ProcessingJob createJob(MultipartFile file) throws IOException {
@@ -38,27 +42,23 @@ public class ProcessingJobService {
         }
 
         Path storedFile = fileStorageService.store(file);
-
-        ProcessingResult result = csvProcessingService.processFile(storedFile);
-
         long totalRows = csvProcessingService.countRows(storedFile);
-
-        long processedRows = result.successfulRecords() + result.failedRecords();
 
         ProcessingJob job = ProcessingJob.builder()
                 .fileName(file.getOriginalFilename())
-                .status(
-                        result.failedRecords() > 0
-                                ? JobStatus.COMPLETED_WITH_ERRORS
-                                : JobStatus.COMPLETED
-                )
+                .status(JobStatus.QUEUED)
                 .totalRecords(totalRows)
-                .processedRecords(processedRows)
-                .successfulRecords(result.successfulRecords())
-                .failedRecords(result.failedRecords())
+                .processedRecords(0)
+                .successfulRecords(0)
+                .failedRecords(0)
                 .createdAt(LocalDateTime.now())
-                .completedAt(LocalDateTime.now())
                 .build();
+
+        job = repository.save(job);
+
+        asyncProcessingService.process(job.getId(), storedFile);
+
+        return job;
 
 //        long totalRecords = csvProcessingService.countRows(storedFile);
 //
@@ -69,6 +69,11 @@ public class ProcessingJobService {
 //                .createdAt(LocalDateTime.now())
 //                .build();
 
-        return repository.save(job);
+//        return repository.save(job);
+    }
+
+    public ProcessingJob getJob(UUID jobId) {
+        return repository.findById(jobId)
+                .orElseThrow(() -> new IllegalArgumentException("Job not found"));
     }
 }
