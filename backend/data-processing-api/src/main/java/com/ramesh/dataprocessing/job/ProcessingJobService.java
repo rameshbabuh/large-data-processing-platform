@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -75,5 +76,9 @@ public class ProcessingJobService {
     public ProcessingJob getJob(UUID jobId) {
         return repository.findById(jobId)
                 .orElseThrow(() -> new IllegalArgumentException("Job not found"));
+    }
+
+    public List<ProcessingJob> getAllJobs() {
+        return repository.findAll();
     }
 }

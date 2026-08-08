@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -53,5 +54,22 @@ public class ProcessingJobController {
                 job.getFailedRecords(),
                 job.getCreatedAt()
         );
+    }
+
+    @GetMapping
+    public List<ProcessingJobResponse> getAllJobs() {
+        return service.getAllJobs()
+                .stream()
+                .map(job -> new ProcessingJobResponse(
+                        job.getId(),
+                        job.getFileName(),
+                        job.getStatus(),
+                        job.getTotalRecords(),
+                        job.getProcessedRecords(),
+                        job.getSuccessfulRecords(),
+                        job.getFailedRecords(),
+                        job.getCreatedAt()
+                ))
+                .toList();
     }
 }
