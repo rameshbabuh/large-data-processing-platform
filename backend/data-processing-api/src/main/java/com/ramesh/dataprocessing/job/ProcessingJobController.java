@@ -1,15 +1,13 @@
 package com.ramesh.dataprocessing.job;
 
-import com.ramesh.dataprocessing.processing.ProcessingError;
 import com.ramesh.dataprocessing.processing.ProcessingErrorRepository;
-import com.ramesh.dataprocessing.transaction.Transaction;
+import com.ramesh.dataprocessing.processing.ProcessingErrorResponse;
 import com.ramesh.dataprocessing.transaction.TransactionRepository;
-
+import com.ramesh.dataprocessing.transaction.TransactionResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import java.io.IOException;
 import java.util.List;
@@ -32,6 +30,23 @@ public class ProcessingJobController {
         this.service = service;
         this.processingErrorRepository = processingErrorRepository;
         this.transactionRepository = transactionRepository;
+    }
+
+    @GetMapping
+    public List<ProcessingJobResponse> getAllJobs() {
+        return service.getAllJobs()
+                .stream()
+                .map(job -> new ProcessingJobResponse(
+                        job.getId(),
+                        job.getFileName(),
+                        job.getStatus(),
+                        job.getTotalRecords(),
+                        job.getProcessedRecords(),
+                        job.getSuccessfulRecords(),
+                        job.getFailedRecords(),
+                        job.getCreatedAt()
+                ))
+                .toList();
     }
 
     @PostMapping("/upload")
@@ -72,33 +87,34 @@ public class ProcessingJobController {
         );
     }
 
-    @GetMapping
-    public List<ProcessingJobResponse> getAllJobs() {
-        return service.getAllJobs()
+    @GetMapping("/{id}/errors")
+    public List<ProcessingErrorResponse> getErrors(@PathVariable UUID id) {
+        return processingErrorRepository
+                .findByProcessingJobId(id)
                 .stream()
-                .map(job -> new ProcessingJobResponse(
-                        job.getId(),
-                        job.getFileName(),
-                        job.getStatus(),
-                        job.getTotalRecords(),
-                        job.getProcessedRecords(),
-                        job.getSuccessfulRecords(),
-                        job.getFailedRecords(),
-                        job.getCreatedAt()
+                .map(error -> new ProcessingErrorResponse(
+                        error.getId(),
+                        error.getRowNumber(),
+                        error.getRawData(),
+                        error.getErrorMessage(),
+                        error.getCreatedAt()
                 ))
                 .toList();
     }
 
-    @GetMapping("/{id}/errors")
-    public List<ProcessingError> getErrors(@PathVariable UUID id) {
-        return processingErrorRepository.findByProcessingJobId(id);
-    }
-
     @GetMapping("/{id}/transactions")
-    public Page<Transaction> getTransactions(
+    public Page<TransactionResponse> getTransactions(
             @PathVariable UUID id,
             Pageable pageable) {
 
-        return transactionRepository.findByProcessingJobId(id, pageable);
+        return transactionRepository.findByProcessingJobId(id, pageable)
+                .map(transaction -> new TransactionResponse(
+                        transaction.getId(),
+                        transaction.getTransactionId(),
+                        transaction.getCustomerId(),
+                        transaction.getAmount(),
+                        transaction.getCurrency(),
+                        transaction.getTransactionDate()
+                ));
     }
 }

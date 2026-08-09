@@ -22,6 +22,24 @@ export interface ProcessingError {
   createdAt: string;
 }
 
+export interface Transaction {
+  id: string;
+  processingJobId: string;
+  transactionId: string;
+  customerId: string;
+  amount: number;
+  currency: string;
+  transactionDate: string;
+}
+
+export interface PageResponse<T> {
+  content: T[];
+  number: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -48,6 +66,16 @@ export class JobService {
   getErrors(jobId: string): Observable<ProcessingError[]> {
     return this.http.get<ProcessingError[]>(
       `${this.baseUrl}/${jobId}/errors`
+    );
+  }
+
+  getTransactions(
+    jobId: string,
+    page: number = 0,
+    size: number = 20
+  ): Observable<PageResponse<Transaction>> {
+    return this.http.get<PageResponse<Transaction>>(
+      `${this.baseUrl}/${jobId}/transactions?page=${page}&size=${size}`
     );
   }
 }

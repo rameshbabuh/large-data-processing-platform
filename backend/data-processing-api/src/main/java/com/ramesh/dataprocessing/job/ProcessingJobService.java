@@ -3,6 +3,7 @@ package com.ramesh.dataprocessing.job;
 import com.ramesh.dataprocessing.processing.AsyncProcessingService;
 import com.ramesh.dataprocessing.processing.CsvProcessingService;
 import com.ramesh.dataprocessing.storage.LocalFileStorageService;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -79,6 +80,8 @@ public class ProcessingJobService {
     }
 
     public List<ProcessingJob> getAllJobs() {
-        return repository.findAll();
+        return repository.findAll(
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
     }
 }
