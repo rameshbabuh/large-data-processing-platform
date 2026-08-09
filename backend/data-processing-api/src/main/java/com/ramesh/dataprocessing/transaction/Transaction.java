@@ -22,6 +22,7 @@ public class Transaction {
 
     private String transactionId;
     private String customerId;
+    private UUID processingJobId;
     private BigDecimal amount;
     private String currency;
     private LocalDate transactionDate;

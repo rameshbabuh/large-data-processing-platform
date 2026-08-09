@@ -2,8 +2,14 @@ package com.ramesh.dataprocessing.job;
 
 import com.ramesh.dataprocessing.processing.ProcessingError;
 import com.ramesh.dataprocessing.processing.ProcessingErrorRepository;
+import com.ramesh.dataprocessing.transaction.Transaction;
+import com.ramesh.dataprocessing.transaction.TransactionRepository;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.io.IOException;
 import java.util.List;
@@ -16,10 +22,16 @@ public class ProcessingJobController {
 
     private final ProcessingJobService service;
     private final ProcessingErrorRepository processingErrorRepository;
+    private final TransactionRepository transactionRepository;
 
-    public ProcessingJobController(ProcessingJobService service, ProcessingErrorRepository processingErrorRepository) {
+    public ProcessingJobController(
+            ProcessingJobService service,
+            ProcessingErrorRepository processingErrorRepository,
+            TransactionRepository transactionRepository
+    ) {
         this.service = service;
         this.processingErrorRepository = processingErrorRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     @PostMapping("/upload")
@@ -80,5 +92,13 @@ public class ProcessingJobController {
     @GetMapping("/{id}/errors")
     public List<ProcessingError> getErrors(@PathVariable UUID id) {
         return processingErrorRepository.findByProcessingJobId(id);
+    }
+
+    @GetMapping("/{id}/transactions")
+    public Page<Transaction> getTransactions(
+            @PathVariable UUID id,
+            Pageable pageable) {
+
+        return transactionRepository.findByProcessingJobId(id, pageable);
     }
 }

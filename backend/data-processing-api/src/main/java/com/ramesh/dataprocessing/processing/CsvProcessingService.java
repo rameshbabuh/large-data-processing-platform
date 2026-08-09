@@ -47,12 +47,13 @@ public class CsvProcessingService {
         return count;
     }
 
-    public Transaction parseTransaction(String line) {
+    public Transaction parseTransaction(UUID jobId, String line) {
         String[] values = line.split(",");
 
         return Transaction.builder()
                 .transactionId(values[0])
                 .customerId(values[1])
+                .processingJobId(jobId)
                 .amount(new BigDecimal(values[2]))
                 .currency(values[3])
                 .transactionDate(LocalDate.parse(values[4]))
@@ -72,7 +73,7 @@ public class CsvProcessingService {
                 rowNumber++;
 
                 try{
-                    Transaction transaction = parseTransaction(line);
+                    Transaction transaction = parseTransaction(jobId, line);
                     transactionRepository.save(transaction);
                     successful++;
                 } catch (Exception e) {
