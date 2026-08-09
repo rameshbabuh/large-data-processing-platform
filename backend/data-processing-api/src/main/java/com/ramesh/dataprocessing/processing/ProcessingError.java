@@ -19,6 +19,8 @@ public class ProcessingError {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    private UUID processingJobId;
+
     private long rowNumber;
 
     @Column(length = 2000)

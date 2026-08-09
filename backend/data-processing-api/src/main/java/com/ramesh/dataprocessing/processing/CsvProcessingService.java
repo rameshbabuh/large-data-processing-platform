@@ -77,6 +77,7 @@ public class CsvProcessingService {
                     successful++;
                 } catch (Exception e) {
                     ProcessingError processingError = ProcessingError.builder()
+                            .processingJobId(jobId)
                             .rowNumber(rowNumber)
                             .rawData(line)
                             .errorMessage(e.getMessage())

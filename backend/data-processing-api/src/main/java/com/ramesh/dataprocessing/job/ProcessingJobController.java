@@ -1,5 +1,7 @@
 package com.ramesh.dataprocessing.job;
 
+import com.ramesh.dataprocessing.processing.ProcessingError;
+import com.ramesh.dataprocessing.processing.ProcessingErrorRepository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,9 +15,11 @@ import java.util.UUID;
 public class ProcessingJobController {
 
     private final ProcessingJobService service;
+    private final ProcessingErrorRepository processingErrorRepository;
 
-    public ProcessingJobController(ProcessingJobService service) {
+    public ProcessingJobController(ProcessingJobService service, ProcessingErrorRepository processingErrorRepository) {
         this.service = service;
+        this.processingErrorRepository = processingErrorRepository;
     }
 
     @PostMapping("/upload")
@@ -71,5 +75,10 @@ public class ProcessingJobController {
                         job.getCreatedAt()
                 ))
                 .toList();
+    }
+
+    @GetMapping("/{id}/errors")
+    public List<ProcessingError> getErrors(@PathVariable UUID id) {
+        return processingErrorRepository.findByProcessingJobId(id);
     }
 }
