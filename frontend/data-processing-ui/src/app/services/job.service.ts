@@ -59,8 +59,13 @@ export class JobService {
     );
   }
 
-  getAllJobs(): Observable<ProcessingJob[]> {
-    return this.http.get<ProcessingJob[]>(this.baseUrl);
+  getAllJobs(
+    page: number = 0,
+    size: number = 10,
+  ): Observable<PageResponse<ProcessingJob>> {
+    return this.http.get<PageResponse<ProcessingJob>>(
+      `${this.baseUrl}?page=${page}&size=${size}`
+    );
   }
 
   getErrors(jobId: string): Observable<ProcessingError[]> {

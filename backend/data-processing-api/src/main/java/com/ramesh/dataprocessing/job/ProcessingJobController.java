@@ -33,9 +33,8 @@ public class ProcessingJobController {
     }
 
     @GetMapping
-    public List<ProcessingJobResponse> getAllJobs() {
-        return service.getAllJobs()
-                .stream()
+    public Page<ProcessingJobResponse> getAllJobs(Pageable pageable) {
+        return service.getAllJobs(pageable)
                 .map(job -> new ProcessingJobResponse(
                         job.getId(),
                         job.getFileName(),
@@ -45,8 +44,7 @@ public class ProcessingJobController {
                         job.getSuccessfulRecords(),
                         job.getFailedRecords(),
                         job.getCreatedAt()
-                ))
-                .toList();
+                ));
     }
 
     @PostMapping("/upload")

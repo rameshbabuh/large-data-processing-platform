@@ -3,14 +3,15 @@ package com.ramesh.dataprocessing.job;
 import com.ramesh.dataprocessing.processing.AsyncProcessingService;
 import com.ramesh.dataprocessing.processing.CsvProcessingService;
 import com.ramesh.dataprocessing.storage.LocalFileStorageService;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -79,9 +80,12 @@ public class ProcessingJobService {
                 .orElseThrow(() -> new IllegalArgumentException("Job not found"));
     }
 
-    public List<ProcessingJob> getAllJobs() {
-        return repository.findAll(
-                Sort.by(Sort.Direction.DESC, "createdAt")
+    public Page<ProcessingJob> getAllJobs(Pageable pageable) {
+        return repository.findAllByOrderByCreatedAtDesc(
+                PageRequest.of(
+                        pageable.getPageNumber(),
+                        pageable.getPageSize()
+                )
         );
     }
 }
