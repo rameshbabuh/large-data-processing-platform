@@ -13,6 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -32,7 +34,7 @@ public class CsvProcessingService {
         this.processingJobRepository = processingJobRepository;
     }
 
-    public long countRows(Path filePath) throws IOException {
+/*    public long countRows(Path filePath) throws IOException {
         long count = 0;
 
         try (BufferedReader reader = Files.newBufferedReader(filePath)) {
@@ -45,7 +47,7 @@ public class CsvProcessingService {
         }
 
         return count;
-    }
+    }*/
 
     public Transaction parseTransaction(UUID jobId, String line) {
         String[] values = line.split(",");
@@ -61,6 +63,8 @@ public class CsvProcessingService {
     }
 
     public ProcessingResult processFile(UUID jobId, Path filePath) throws IOException {
+        List<Transaction> batch = new ArrayList<>();
+        int batchSize = 500;
         long successful = 0;
         long failed = 0;
         long rowNumber = 1;
@@ -74,6 +78,13 @@ public class CsvProcessingService {
 
                 try{
                     Transaction transaction = parseTransaction(jobId, line);
+                    batch.add(transaction);
+
+                    if(batch.size() >= batchSize){
+                        transactionRepository.saveAll(batch);
+                        batch.clear();
+                    }
+
                     transactionRepository.save(transaction);
                     successful++;
                 } catch (Exception e) {
@@ -98,6 +109,11 @@ public class CsvProcessingService {
 
                     processingJobRepository.save(job);
                 }
+            }
+
+            //remaining lines
+            if (!batch.isEmpty()) {
+                transactionRepository.saveAll(batch);
             }
         }
         return new ProcessingResult(successful, failed);

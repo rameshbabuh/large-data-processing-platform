@@ -1,7 +1,6 @@
 package com.ramesh.dataprocessing.job;
 
 import com.ramesh.dataprocessing.processing.AsyncProcessingService;
-import com.ramesh.dataprocessing.processing.CsvProcessingService;
 import com.ramesh.dataprocessing.storage.LocalFileStorageService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,18 +19,15 @@ public class ProcessingJobService {
 
     private final ProcessingJobRepository repository;
     private final LocalFileStorageService fileStorageService;
-    private final CsvProcessingService csvProcessingService;
     private final AsyncProcessingService asyncProcessingService;
 
     public ProcessingJobService(
             ProcessingJobRepository repository,
             LocalFileStorageService fileStorageService,
-            CsvProcessingService csvProcessingService,
             AsyncProcessingService asyncProcessingService
     ) {
         this.repository = repository;
         this.fileStorageService = fileStorageService;
-        this.csvProcessingService = csvProcessingService;
         this.asyncProcessingService = asyncProcessingService;
     }
 
@@ -45,12 +41,12 @@ public class ProcessingJobService {
         }
 
         Path storedFile = fileStorageService.store(file);
-        long totalRows = csvProcessingService.countRows(storedFile);
+//        long totalRows = csvProcessingService.countRows(storedFile);
 
         ProcessingJob job = ProcessingJob.builder()
                 .fileName(file.getOriginalFilename())
                 .status(JobStatus.QUEUED)
-                .totalRecords(totalRows)
+                .totalRecords(0)
                 .processedRecords(0)
                 .successfulRecords(0)
                 .failedRecords(0)

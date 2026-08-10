@@ -35,12 +35,25 @@ public class AsyncProcessingService {
             job.setStartedAt(LocalDateTime.now());
             processingJobRepository.save(job);
 
+            long startTime = System.currentTimeMillis();
+
             ProcessingResult result =
                     csvProcessingService.processFile(jobId, filePath);
 
-            job.setProcessedRecords(
-                    result.successfulRecords() + result.failedRecords()
+            long duration = System.currentTimeMillis() - startTime;
+
+            log.info(
+                    "Job {} processed {} records in {} ms",
+                    jobId,
+                    result.successfulRecords() + result.failedRecords(),
+                    duration
             );
+
+            long totalProcessed =
+                    result.successfulRecords() + result.failedRecords();
+
+            job.setTotalRecords(totalProcessed);
+            job.setProcessedRecords(totalProcessed);
             job.setSuccessfulRecords(result.successfulRecords());
             job.setFailedRecords(result.failedRecords());
 
