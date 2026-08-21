@@ -11,6 +11,8 @@ export interface ProcessingJob {
   successfulRecords: number;
   failedRecords: number;
   createdAt: string;
+  startedAt: string | null;
+  completedAt: string | null;
 }
 
 export interface ProcessingError {
@@ -34,7 +36,7 @@ export interface Transaction {
 
 export interface PageResponse<T> {
   content: T[];
-  number: number;
+  page: number;
   size: number;
   totalElements: number;
   totalPages: number;
@@ -68,9 +70,13 @@ export class JobService {
     );
   }
 
-  getErrors(jobId: string): Observable<ProcessingError[]> {
-    return this.http.get<ProcessingError[]>(
-      `${this.baseUrl}/${jobId}/errors`
+  getErrors(
+    jobId: string,
+    page: number = 0,
+    size: number = 10
+  ): Observable<PageResponse<ProcessingError>> {
+    return this.http.get<PageResponse<ProcessingError>>(
+      `${this.baseUrl}/${jobId}/errors?page=${page}&size=${size}`
     );
   }
 

@@ -1,0 +1,402 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  padding: 40px;
+  box-sizing: border-box;
+
+  background:
+    radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.10), transparent 28%),
+    radial-gradient(circle at 100% 0%, rgba(14, 165, 233, 0.06), transparent 24%),
+    #f8fafc;
+
+  color: #0f172a;
+
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+/* -----------------------------
+   HEADINGS
+----------------------------- */
+
+h1 {
+  margin: 0 0 32px;
+
+  font-size: 36px;
+  font-weight: 750;
+  letter-spacing: -0.04em;
+
+  color: #0f172a;
+}
+
+h2 {
+  margin: 42px 0 16px;
+
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+
+  color: #1e293b;
+}
+
+/* -----------------------------
+   TEXT
+----------------------------- */
+
+p {
+  margin: 7px 0;
+
+  font-size: 14px;
+  line-height: 1.5;
+
+  color: #475569;
+}
+
+/* -----------------------------
+   FILE UPLOAD
+----------------------------- */
+
+input[type="file"] {
+  padding: 10px 12px;
+  margin-right: 10px;
+
+  background: #ffffff;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+
+  font-size: 13px;
+  color: #475569;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 1px 3px rgba(15, 23, 42, 0.03);
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+input[type="file"]:hover {
+  border-color: #94a3b8;
+}
+
+input[type="file"]:focus {
+  outline: none;
+  border-color: #3b82f6;
+
+  box-shadow:
+    0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+input[type="file"]::file-selector-button {
+  margin-right: 12px;
+  padding: 7px 11px;
+
+  border: none;
+  border-radius: 7px;
+
+  background: #eef2ff;
+  color: #3730a3;
+
+  font-size: 12px;
+  font-weight: 650;
+
+  cursor: pointer;
+}
+
+/* -----------------------------
+   BUTTONS
+----------------------------- */
+
+button {
+  padding: 9px 14px;
+
+  border: 1px solid transparent;
+  border-radius: 9px;
+
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #1d4ed8
+  );
+
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.10),
+    0 3px 8px rgba(37, 99, 235, 0.12);
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+
+  background: linear-gradient(
+    135deg,
+    #1d4ed8,
+    #1e40af
+  );
+
+  box-shadow:
+    0 3px 8px rgba(37, 99, 235, 0.20);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+button:disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+
+  cursor: not-allowed;
+
+  box-shadow: none;
+}
+
+/* -----------------------------
+   TABLES
+----------------------------- */
+
+table {
+  width: 100%;
+  margin-top: 14px;
+
+  border-collapse: separate;
+  border-spacing: 0;
+
+  background: rgba(255, 255, 255, 0.96);
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 1px 3px rgba(15, 23, 42, 0.04),
+    0 10px 30px rgba(15, 23, 42, 0.04);
+}
+
+/* -----------------------------
+   TABLE HEADER
+----------------------------- */
+
+thead {
+  background: linear-gradient(
+    90deg,
+    #1e3a5f,
+    #294d77
+  );
+}
+
+th {
+  padding: 14px;
+
+  text-align: left;
+
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.055em;
+
+  text-transform: uppercase;
+
+  color: #f8fafc;
+
+  white-space: nowrap;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* -----------------------------
+   TABLE BODY
+----------------------------- */
+
+td {
+  padding: 14px;
+
+  font-size: 13px;
+  line-height: 1.45;
+
+  color: #334155;
+
+  border-bottom: 1px solid #edf2f7;
+
+  vertical-align: middle;
+}
+
+tbody tr {
+  background: #ffffff;
+
+  transition:
+    background 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+tbody tr:nth-child(even) {
+  background: #fbfdff;
+}
+
+tbody tr:hover {
+  background: #f1f5f9;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* -----------------------------
+   BUTTONS INSIDE TABLE
+----------------------------- */
+
+table button {
+  padding: 6px 10px;
+
+  border-radius: 7px;
+
+  font-size: 11px;
+  font-weight: 650;
+
+  white-space: nowrap;
+
+  box-shadow: none;
+}
+
+/* make table actions slightly softer */
+
+table td button {
+  background: #eff6ff;
+  color: #1d4ed8;
+
+  border: 1px solid #dbeafe;
+}
+
+table td button:hover:not(:disabled) {
+  background: #dbeafe;
+  color: #1e40af;
+
+  transform: none;
+
+  box-shadow: none;
+}
+
+/* -----------------------------
+   PAGINATION
+----------------------------- */
+
+table + div {
+  margin-top: 14px;
+}
+
+div {
+  margin-top: 14px;
+}
+
+div > button {
+  margin-right: 8px;
+}
+
+div > span {
+  margin-right: 10px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #64748b;
+}
+
+/* -----------------------------
+   GENERIC LINKS / EMPHASIS
+----------------------------- */
+
+strong {
+  color: #1e293b;
+}
+
+/* -----------------------------
+   SCROLLBAR
+----------------------------- */
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* -----------------------------
+   RESPONSIVE
+----------------------------- */
+
+@media (max-width: 1200px) {
+  :host {
+    padding: 28px;
+  }
+
+  table {
+    display: block;
+
+    overflow-x: auto;
+
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 768px) {
+  :host {
+    padding: 18px;
+  }
+
+  h1 {
+    font-size: 29px;
+  }
+
+  h2 {
+    margin-top: 32px;
+    font-size: 20px;
+  }
+
+  input[type="file"] {
+    display: block;
+
+    width: 100%;
+    box-sizing: border-box;
+
+    margin: 0 0 10px;
+  }
+
+  button {
+    min-height: 38px;
+  }
+
+  th,
+  td {
+    padding: 11px;
+  }
+}

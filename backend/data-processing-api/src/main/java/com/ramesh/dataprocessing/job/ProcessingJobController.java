@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -33,18 +32,29 @@ public class ProcessingJobController {
     }
 
     @GetMapping
-    public Page<ProcessingJobResponse> getAllJobs(Pageable pageable) {
-        return service.getAllJobs(pageable)
-                .map(job -> new ProcessingJobResponse(
-                        job.getId(),
-                        job.getFileName(),
-                        job.getStatus(),
-                        job.getTotalRecords(),
-                        job.getProcessedRecords(),
-                        job.getSuccessfulRecords(),
-                        job.getFailedRecords(),
-                        job.getCreatedAt()
-                ));
+    public PageResponse<ProcessingJobResponse> getAllJobs(Pageable pageable) {
+        Page<ProcessingJobResponse> page =
+                service.getAllJobs(pageable)
+                        .map(job -> new ProcessingJobResponse(
+                                job.getId(),
+                                job.getFileName(),
+                                job.getStatus(),
+                                job.getTotalRecords(),
+                                job.getProcessedRecords(),
+                                job.getSuccessfulRecords(),
+                                job.getFailedRecords(),
+                                job.getCreatedAt(),
+                                job.getStartedAt(),
+                                job.getCompletedAt()
+                        ));
+
+        return new PageResponse<>(
+                page.getContent(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages()
+        );
     }
 
     @PostMapping("/upload")
@@ -66,7 +76,9 @@ public class ProcessingJobController {
                 job.getProcessedRecords(),
                 job.getSuccessfulRecords(),
                 job.getFailedRecords(),
-                job.getCreatedAt()
+                job.getCreatedAt(),
+                job.getStartedAt(),
+                job.getCompletedAt()
         );
     }
 
@@ -81,38 +93,60 @@ public class ProcessingJobController {
                 job.getProcessedRecords(),
                 job.getSuccessfulRecords(),
                 job.getFailedRecords(),
-                job.getCreatedAt()
+                job.getCreatedAt(),
+                job.getStartedAt(),
+                job.getCompletedAt()
         );
     }
 
     @GetMapping("/{id}/errors")
-    public List<ProcessingErrorResponse> getErrors(@PathVariable UUID id) {
-        return processingErrorRepository
-                .findByProcessingJobId(id)
-                .stream()
-                .map(error -> new ProcessingErrorResponse(
-                        error.getId(),
-                        error.getRowNumber(),
-                        error.getRawData(),
-                        error.getErrorMessage(),
-                        error.getCreatedAt()
-                ))
-                .toList();
+    public PageResponse<ProcessingErrorResponse> getErrors(@PathVariable UUID id, Pageable pageable) {
+//        service.getJob(id);
+        Page<ProcessingErrorResponse> page =
+                processingErrorRepository
+                        .findByProcessingJobId(id, pageable)
+                        .map(error -> new ProcessingErrorResponse(
+                                error.getId(),
+                                error.getRowNumber(),
+                                error.getRawData(),
+                                error.getErrorMessage(),
+                                error.getCreatedAt()
+                        ));
+
+        return new PageResponse<>(
+                page.getContent(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages()
+        );
     }
 
     @GetMapping("/{id}/transactions")
-    public Page<TransactionResponse> getTransactions(
+    public PageResponse<TransactionResponse> getTransactions(
             @PathVariable UUID id,
             Pageable pageable) {
 
-        return transactionRepository.findByProcessingJobId(id, pageable)
-                .map(transaction -> new TransactionResponse(
-                        transaction.getId(),
-                        transaction.getTransactionId(),
-                        transaction.getCustomerId(),
-                        transaction.getAmount(),
-                        transaction.getCurrency(),
-                        transaction.getTransactionDate()
-                ));
+        service.getJob(id);
+
+        Page<TransactionResponse> page =
+                transactionRepository
+                        .findByProcessingJobId(id, pageable)
+                        .map(transaction -> new TransactionResponse(
+                                transaction.getId(),
+                                transaction.getTransactionId(),
+                                transaction.getCustomerId(),
+                                transaction.getAmount(),
+                                transaction.getCurrency(),
+                                transaction.getTransactionDate()
+                        ));
+
+        return new PageResponse<>(
+                page.getContent(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages()
+        );
     }
 }

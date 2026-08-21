@@ -22,3 +22,32 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# IntelliJ
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Java
+target/
+
+# Angular / Node
+node_modules/
+dist/
+
+# Local uploads / generated data
+uploads/
+sample-data/generated/
+
+# Secrets
+.env
+*.key
+*.pem
+
+# Generated / local sample data
+backend/data-processing-api/sample-data/*.csv
+!backend/data-processing-api/sample-data/sample-transactions.csv
+
+

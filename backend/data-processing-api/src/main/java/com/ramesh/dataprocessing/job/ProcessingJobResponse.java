@@ -11,6 +11,7 @@ public record ProcessingJobResponse(
         long processedRecords,
         long successfulRecords,
         long failedRecords,
-        LocalDateTime createdAt
-) {
-}
+        LocalDateTime createdAt,
+        LocalDateTime startedAt,
+        LocalDateTime completedAt
+) {}

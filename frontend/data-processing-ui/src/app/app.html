@@ -1,0 +1,194 @@
+<h1>Large Data Processing Platform</h1>
+
+<input
+  type="file"
+  accept=".csv"
+  (change)="onFileSelected($event)"
+>
+
+<button
+  (click)="upload()"
+  [disabled]="!selectedFile">
+  Upload CSV
+</button>
+
+@if (uploadedJob) {
+  <p>Job ID: {{ uploadedJob.id }}</p>
+  <p>File: {{ uploadedJob.fileName }}</p>
+  <p>Status: {{ uploadedJob.status }}</p>
+  @if (getProgress(uploadedJob) !== null) {
+    <p>
+      Progress:
+      {{ uploadedJob.processedRecords }}
+      /
+      {{ uploadedJob.totalRecords }}
+      ({{ getProgress(uploadedJob) }}%)
+    </p>
+  } @else {
+    <p>
+      Processed: {{ uploadedJob.processedRecords }}
+    </p>
+  }
+}
+
+<h2>Processing Jobs</h2>
+
+<table>
+  <thead>
+  <tr>
+    <th>File</th>
+    <th>Status</th>
+    <th>Total</th>
+    <th>Processed</th>
+    <th>Successful</th>
+    <th>Failed</th>
+    <th>Created</th>
+    <th>Progress</th>
+    <th>Errors</th>
+    <th>Transactions</th>
+    <th>Duration</th>
+    <th>Records/sec</th>
+  </tr>
+  </thead>
+
+  <tbody>
+    @for (job of jobs(); track job.id) {
+      <tr>
+        <td>{{ job.fileName }}</td>
+        <td>{{ job.status }}</td>
+        <td>{{ job.totalRecords }}</td>
+        <td>{{ job.processedRecords }}</td>
+        <td>{{ job.successfulRecords }}</td>
+        <td>{{ job.failedRecords }}</td>
+        <td>{{ job.createdAt }}</td>
+        <td>
+          @if (getProgress(job) !== null) {
+            {{ getProgress(job) }}%
+          } @else {
+            {{ job.processedRecords }} processed
+          }
+        </td>
+        <td>
+          @if (job.failedRecords > 0) {
+            <button (click)="loadErrors(job.id)">
+              View Errors
+            </button>
+          }
+        </td>
+        <td>
+          <button (click)="loadTransactions(job.id)">
+            View Transactions
+          </button>
+        </td>
+        <td>{{ getDuration(job) }}</td>
+        <td>{{ getThroughput(job) }}</td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+<div>
+  <button
+    (click)="loadJobs(jobPage() - 1)"
+    [disabled]="jobPage() === 0">
+    Previous
+  </button>
+
+  <span>
+    Page {{ jobPage() + 1 }} of {{ jobTotalPages() }}
+  </span>
+
+  <button
+    (click)="loadJobs(jobPage() + 1)"
+    [disabled]="jobPage() + 1 >= jobTotalPages()">
+    Next
+  </button>
+</div>
+
+@if (selectedTransactions().length > 0) {
+  <h2>Transactions</h2>
+
+  <table>
+    <thead>
+    <tr>
+      <th>Transaction ID</th>
+      <th>Customer ID</th>
+      <th>Amount</th>
+      <th>Currency</th>
+      <th>Date</th>
+    </tr>
+    </thead>
+
+    <tbody>
+      @for (transaction of selectedTransactions(); track transaction.id) {
+        <tr>
+          <td>{{ transaction.transactionId }}</td>
+          <td>{{ transaction.customerId }}</td>
+          <td>{{ transaction.amount }}</td>
+          <td>{{ transaction.currency }}</td>
+          <td>{{ transaction.transactionDate }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <div>
+    <button
+      (click)="loadTransactions(selectedTransactionJobId()!, transactionPage() - 1)"
+      [disabled]="transactionPage() === 0">
+      Previous
+    </button>
+
+    <span>
+    Page {{ transactionPage() + 1 }} of {{ transactionTotalPages() }}
+  </span>
+
+    <button
+      (click)="loadTransactions(selectedTransactionJobId()!, transactionPage() + 1)"
+      [disabled]="transactionPage() + 1 >= transactionTotalPages()">
+      Next
+    </button>
+  </div>
+}
+
+@if (selectedErrors().length > 0) {
+<h2>Processing Errors</h2>
+
+<table>
+  <thead>
+  <tr>
+    <th>Row</th>
+    <th>Raw Data</th>
+    <th>Error</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  @for (error of selectedErrors(); track error.id) {
+  <tr>
+    <td>{{ error.rowNumber }}</td>
+    <td>{{ error.rawData }}</td>
+    <td>{{ error.errorMessage }}</td>
+  </tr>
+  }
+  </tbody>
+</table>
+
+<div>
+  <button
+    (click)="loadErrors(selectedErrorJobId()!, errorPage() - 1)"
+    [disabled]="errorPage() === 0">
+    Previous
+  </button>
+
+  <span>
+      Page {{ errorPage() + 1 }} of {{ errorTotalPages() }}
+    </span>
+
+  <button
+    (click)="loadErrors(selectedErrorJobId()!, errorPage() + 1)"
+    [disabled]="errorPage() + 1 >= errorTotalPages()">
+    Next
+  </button>
+</div>
+}
